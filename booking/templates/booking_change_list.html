@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Booking list{% endblock %}
+
+{% block content %}
+    <div id="content">
+
+        <h1>Post Change - {{user}}</h1>
+
+        <table class="change-list">
+            <tr>
+                <th>Title</th>
+                <th>Owner</th>
+                <th>Update</th>
+                <th>Delete</th>
+            </tr>
+
+            {% for bookinginfo in object_list %}
+                <tr>
+                    <td>{{ bookinginfo.title }}</td>
+                    <td>{{ bookinginfo.owner }}</td>
+                    <td><a href="{% url 'booking:update' bookinginfo.id %}">Update</a></td>
+                    <td><a href="{% url 'booking:delete' bookinginfo.id %}">Delete</a></td>
+                </tr>
+            {% endfor %}
+        </table>
+
+    </div>
+{% endblock %}

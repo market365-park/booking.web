@@ -1,0 +1,11 @@
+{% extends "base_min.html" %}
+
+{% block title %}Fail Alert{% endblock %}
+
+{% block content %}
+    <script>
+        alert("이미 예약된 시간입니다.");
+        opener.location.reload();
+        window.close();
+    </script>
+{% endblock %}

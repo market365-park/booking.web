@@ -1,0 +1,442 @@
+{% extends "base.html" %}ㅑ {% block title %}부킹부킹{% endblock %} {% load staticfiles %} {% block stylesheet %}
+<style>
+    #calendar {
+        max-width: 1800px;
+        margin: 0 0 30px 0;
+    }
+
+    @font-face {
+        font-family: "NanumBarunGothic-YetHangul";
+        src:url({% static "font/NanumBarunGothic-YetHangul.eot" %});
+        src:url({% static "font/NanumBarunGothic-YetHangul.woff" %}) format("woff"),
+        url({% static "font/NanumBarunGothic-YetHangul.ttf" %}) format("truetype");
+    }
+
+    #calendar {
+        font-family: NanumBarunGothic-YetHangul;
+        color: #0f0f0f;
+    }
+
+    h2 {
+        color: #0f0f0f;
+    }
+
+    .modal-content .row {
+        text-align: center;
+        margin: 0 0 30px 0;
+    }
+
+    .modal-content th,
+    td {
+        text-align: center;
+    }
+
+    .welcome_text {
+        text-align: center;
+        margin: 5px 0 30px 0;
+    }
+
+    .info-text {
+        margin: 5px 80px 40px 80px;
+    }
+
+    .modal-body a {
+        text-decoration: none;
+        color: #000000;
+    }
+
+    .modal-body a:hover {
+        color: #5b8dff;
+    }
+
+    .modal-body a:active {
+        color: #5b8dff;
+    }
+
+    .modal-body a:focus {
+        color: #5b8dff;
+    }
+
+    /* nav tag */
+
+    .modal-body nav ul {
+        padding-top: 3px;
+        padding-bottom: 3px;
+
+    }
+
+    /*  상단 여백 10px  */
+
+    .modal-body nav ul li {
+        display: inline;
+        /*  세로나열을 가로나열로 변경 */
+        text-align: center;
+        font-size: 16px;
+        font-weight: bold;
+        font-color: #5b8dff;
+    }
+
+    .panel-default>.panel-heading {
+        background-color: #FFFFFF;
+    }
+</style>
+
+<link href='../static/cal/lib/fullcalendar.css' rel='stylesheet' />
+<link href='../static/cal/lib/fullcalendar.print.css' rel='stylesheet' media='print' />
+<link href='../static/cal/scheduler.css' rel='stylesheet' /> {% endblock %} {% block script %}
+
+<head>
+    <script>
+        var child_win;
+        var roomResources = [];
+        {% for room in rooms %}
+        roomResources.push({
+            id: '{{ room.room_id }}',
+            title: '{{ room.room_name }}',
+            eventColor: '{{ room.event_color }}'
+        });
+        {% endfor %}
+
+        var bookingInfos = [];
+        {% for bookinginfo in bookinginfos %}
+        bookingInfos.push({
+            id: '{{ bookinginfo.id }}',
+            resourceId: '{{ bookinginfo.room_id }}',
+            start: '{{ bookinginfo.start_time | date:"c"}}',
+            end: '{{ bookinginfo.end_time | date:"c"}}',
+            title: '{{ bookinginfo.title }}'
+        });
+        {% endfor %}
+
+        var nickname = "{{ user.first_name }}";
+        var teamname = "{{ user.last_name }}";
+        var phone = "{{ user.phone }}";
+
+        function getQuerystring(paramName) {
+            var _tempUrl = window.location.search.substring(1); //url에서 처음부터 '?'까지 삭제
+            var _tempArray = _tempUrl.split('&'); // '&'을 기준으로 분리하기
+
+            for (var i = 0; _tempArray.length; i++) {
+                var _keyValuePair = _tempArray[i].split('='); // '=' 을 기준으로 분리하기
+
+                if (_keyValuePair[0] == paramName) { // _keyValuePair[0] : 파라미터 명
+                    // _keyValuePair[1] : 파라미터 값
+                    return _keyValuePair[1];
+                } else {
+                    return null;
+                }
+            }
+        }
+
+        var init_day = getQuerystring('start');
+        if (init_day == null) {
+            init_day = new Date();
+        }
+
+        $(function () { // document ready
+            $('#calendar').fullCalendar({
+                schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+                now: init_day,
+                defaultView: 'agendaDay',
+                height: 640,
+                views: {
+                    agendaDay: { // name of view
+                        titleFormat: 'M월 DD일 - ddd '
+                        // other view-specific options here
+                    },
+                    agendaWeek: {
+                        titleFormat: 'M월 DD일'
+                    },
+                    month: {
+                        titleFormat: 'YYYY년 M월'
+                    }
+                },
+                customButtons: {
+                    myCustomButton: {
+                        text: 'Today',
+                        click: function () {
+                            location.href = '/';
+                        }
+                    }
+                },
+                nowIndicator: true,
+                header: {
+                    left: 'prev,next myCustomButton',
+                    center: 'title',
+                    right: 'agendaDay,agendaWeek,month'
+                },
+                allDaySlot: false,
+                minTime: "07:00:00",
+                maxTime: "20:00:00",
+                businessHours: {
+                    // days of week. an array of zero-based day of week integers (0=Sunday)
+                    dow: [1, 2, 3, 4, 5], // Monday - Thursday
+
+                    start: '08:00', // a start time (10am in this example)
+                    end: '19:00' // an end time (6pm in this example)
+                },
+
+                resources: roomResources,
+                events: bookingInfos,
+
+                navLinks: true,
+                navLinkDayClick: function (date) {
+                    $('#calendar').fullCalendar('gotoDate', date);
+                    $('#calendar').fullCalendar('changeView', 'agendaDay');
+                },
+                selectOverlap: false,
+                selectable: true,
+                selectHelper: true,
+                select: function (start, end, jsEvent, view, resources) {
+                    $('#calendar').fullCalendar({ selectOverlap: true });
+
+                    if (view.name == 'month') {
+                        $('#calendar').fullCalendar('gotoDate', start);
+                        $('#calendar').fullCalendar('changeView', 'agendaDay');
+                    }
+                    else {
+                        requestUrl = "/booking/add/";
+                        requestUrl = requestUrl + "?start=" + start + "&end=" + end + "&room=" + encodeURIComponent(resources.id) +
+                            "&name=" + encodeURIComponent(nickname) + "&team=" + encodeURIComponent(teamname) + "&phone=" + phone;
+
+
+                        window.open(requestUrl, "booking", "scrollbars=yes, left=700, top=200, height=580, width=490, alwaysRaised=yes");
+                    }
+                },
+                eventLimit: true, // allow "more" link when too many events
+                editable: false,
+                eventClick: function (Events) {
+                    var modified_time = Number(Events.end) + 6000000
+                    requestUrl = "/booking/" + Events.id + "/delete/";
+                    requestUrl = requestUrl + "?start=" + modified_time;
+                    window.open(requestUrl, "delete", "scrollbars=yes, left=700, top=300, height=385, width=490, alwaysRaised=yes");
+                }
+            });
+        });
+    </script>
+    <script type="text/javascript" src={% static "cal/lib/moment.min.js" %}></script>
+    <script type="text/javascript" src={% static "cal/lib/fullcalendar.js" %}></script>
+    <script type="text/javascript" src={% static "cal/scheduler.js" %}></script>
+
+</head>
+{% endblock %} {% block content %}
+
+<body>
+    <div class="col-xs-12">
+        <div id='calendar'></div>
+
+        <div class="col-xs-3" style="padding: 0 0 0 10px; overflow:hidden;white-space:nowrap; text-overflow:ellipsis;">
+            <span class="glyphicon glyphicon-paperclip"></span>
+            <strong>
+                <a href='{{ posts.get_absolute_url }}'>{{ posts.title }}</a>
+            </strong>
+        </div>
+        <div class="col-xs-9" style="padding: 0 20px 0 0;">
+            <marquee behavior="scroll" direction="left">{{ posts.content }}</marquee>
+        </div>
+
+        <br>
+        <hr>
+    </div>
+</body>
+{% endblock content %} {% block footer %}
+
+<footer>
+    <div class="layout">
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" id="modal-button" data-toggle="modal" data-target="#Modal_south">남쪽 레이아웃</button>
+        <button type="button" class="btn btn-danger" id="modal-button" data-toggle="modal" data-target="#Modal_north">북쪽 레이아웃</button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="Modal_south" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="row">
+                        <div class="modal-body">
+                            <div class="col-sm-12">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                <img src="{% static "images/south.png" %}" style="width:850px">
+                                <hr>
+                                <nav>
+                                    <ul>
+                                        <li>
+                                            <a href="#south_detail" data-toggle="tab">
+                                                회의실 상세정보 보기</a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                                <div class="tab-content">
+                                    <div class="tab-pane" id="south_detail">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th></th>
+                                                            <th>좌석수</th>
+                                                            <th>프로젝터</th>
+                                                            <th>TV</th>
+                                                            <th>컴퓨터</th>
+                                                            <th>스피커</th>
+                                                            <th>보드</th>
+                                                            <th>비고</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <th scope="row">s1.인텔리전스</th>
+                                                            <td>9</td>
+                                                            <td>X</td>
+                                                            <td>O</td>
+                                                            <td>O</td>
+                                                            <td>X</td>
+                                                            <td>O</td>
+                                                            <td> </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">s2.스마트</th>
+                                                            <td>12</td>
+                                                            <td>X</td>
+                                                            <td>O</td>
+                                                            <td>O</td>
+                                                            <td>O</td>
+                                                            <td>X</td>
+                                                            <td>영상회의</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">s3.커넥티드</th>
+                                                            <td>30</td>
+                                                            <td>O</td>
+                                                            <td>X</td>
+                                                            <td>O</td>
+                                                            <td>O</td>
+                                                            <td>O</td>
+                                                            <td> </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">s4.모빌리티</th>
+                                                            <td>9</td>
+                                                            <td>O</td>
+                                                            <td>X</td>
+                                                            <td>O</td>
+                                                            <td>O</td>
+                                                            <td>X</td>
+                                                            <td> </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">s5.IoT</th>
+                                                            <td>8</td>
+                                                            <td>X</td>
+                                                            <td>X</td>
+                                                            <td>O</td>
+                                                            <td>O</td>
+                                                            <td>O</td>
+                                                            <td>스탠딩</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- wizard container -->
+                    </div>
+                    <div class="modal-footer">
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- row -->
+        </div>
+
+        <div class="modal fade" id="Modal_north" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="row">
+                        <div class="modal-body">
+                            <div class="col-sm-12">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                <img src="{% static "images/north.png" %}" style="width:850px">
+                                <hr>
+                                <nav>
+                                    <ul>
+                                        <li>
+                                            <a href="#north_detail" data-toggle="tab">
+                                                회의실 상세정보 보기</a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                                <div class="tab-content">
+                                    <div class="tab-pane" id="north_detail">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th></th>
+                                                            <th>좌석수</th>
+                                                            <th>프로젝터</th>
+                                                            <th>TV</th>
+                                                            <th>컴퓨터</th>
+                                                            <th>스피커</th>
+                                                            <th>보드</th>
+                                                            <th>비고</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <th scope="row">n1.카클라우드</th>
+                                                            <td>18</td>
+                                                            <td>O</td>
+                                                            <td>X</td>
+                                                            <td>O</td>
+                                                            <td>X</td>
+                                                            <td>O</td>
+                                                            <td> </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">n2.이노베이션</th>
+                                                            <td>16</td>
+                                                            <td>O</td>
+                                                            <td>X</td>
+                                                            <td>O</td>
+                                                            <td>O</td>
+                                                            <td>O</td>
+                                                            <td> </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- wizard container -->
+                    </div>
+                    <div class="modal-footer">
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- row -->
+        </div>
+    </div>
+    <br>
+    <p>If you want to get the source code, click this icon
+        <a href="http://scm.connected-car.io/projects/DEVCLOUD/repos/web.booking/browse" target="_blank">
+            <img src="{% static "images/bitbucket.png" %}" width="15x" />
+        </a>
+    </p>
+</footer>
+{% endblock footer %}

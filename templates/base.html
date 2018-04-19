@@ -1,0 +1,126 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>부킹부킹</title>
+
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+    <!-- Bootstrap 3.3.6 -->
+    <link rel="stylesheet" type="text/css" href="{% static "bootstrap/css/bootstrap.min.css" %}" />
+    <link rel="stylesheet" type="text/css" href="{% static "bootstrap/css/bootstrap-datepicker.min.css" %}" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="shortcut icon" href="{% static "images/favicon.ico" %}">
+
+    {% block stylesheet %}{% endblock %}
+    <style>
+        @font-face {
+            font-family: "Makgeolli";
+            src:url({% static "font/Makgeolli.eot" %});
+            src:url({% static "font/Makgeolli.woff" %}) format("woff"),
+            url({% static "font/Makgeolli.ttf" %}) format("truetype");
+        }
+        @font-face {
+            font-family: "NanumBarunGothic-YetHangul";
+            src:url({% static "font/NanumBarunGothic-YetHangul.eot" %});
+            src:url({% static "font/NanumBarunGothic-YetHangul.woff" %}) format("woff"),
+            url({% static "font/NanumBarunGothic-YetHangul.ttf" %}) format("truetype");
+        }
+
+        #main_title {
+            font-family: Makgeolli;
+            font-size: 40px;
+            color: #e8ecf4;
+        }
+
+        body {
+            font-family: NanumBarunGothic-YetHangul;
+        }
+    </style>
+</head>
+
+<body role="document">
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="col-xs-1"></div>
+        <div class="col-xs-10">
+            <div id="navbar" class="navbar-collapse collapse">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a href="{% url 'home' %}" class="navbar-brand" id="main_title">부킹부킹</a>
+                </div>
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="{% url 'carhome' %}">Car</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Blog <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url 'blog:main' %}">Archive</a></li>
+                            <li><a href="{% url 'blog:add' %}">Write</a></li>
+                        </ul>
+                    </li>
+
+                    <li><a href="http://cms.connected-car.io/">CMS</a></li>
+                    <li><a href="http://its.connected-car.io/">ITS</a></li>
+                    <li><a href="http://scm.connected-car.io/">SCM</a></li>
+                    {% if user.username == 'admin' %}
+                        <li><a href="{% url 'admin:index' %}"><i class="fa fa-circle text-success"></i>Admin</a></li>
+                    {% endif %}
+                </ul>
+
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        {% if user.is_active %}
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                <span class="glyphicon glyphicon-user"></span> {% firstof user.get_short_name user.get_username %} <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="/account/profile/{{ user.pk }}/edit/">Modify Profile</a></li>
+                                <li><a href="{% url 'password_change' %}">Change Password</a></li>
+                                <li><a href="{% url 'logout' %}">Logout</a></li>
+                            </ul>
+                        {% else %}
+                            <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                <span class="glyphicon glyphicon-user"></span> Anonymous</a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{% url 'login' %}">Login</a></li>
+                                <li><a href="{% url 'register' %}">Register</a></li>
+                            </ul>
+                        {% endif %}
+                    </li>
+                </ul>            
+            </div>
+        </div>
+        <div class="col-xs-1"></div>
+    </div>
+</nav><!--/.navbar -->
+
+<div class="container" style="text-align: center;">
+    <div class="row" style="padding: 90px 0 0 0;">
+        {% block content %}{% endblock %}
+        {% block footer %}{% endblock %}
+    </div>
+</div> <!-- /container -->
+
+<!-- jQuery 2.2.3 -->
+{#<script type="text/javascript" src={% static "cal/lib/jquery.min.js" %}></script>#}
+<script type="text/javascript" src={% static "plugins/jQuery/jquery-2.2.3.min.js" %}></script>
+<!-- Bootstrap 3.3.6 -->
+<script type="text/javascript" src={% static "bootstrap/js/bootstrap.js" %}></script>
+<script type="text/javascript" src={% static "bootstrap/js/bootstrap-datepicker.min.js" %}></script>
+
+{% block script %}{% endblock %}
+
+</body>
+</html>

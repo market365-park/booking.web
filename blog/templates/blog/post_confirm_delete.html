@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}post_confirm_delete.html{% endblock %}
+
+{% block content %}
+    <div id="content">
+
+        <h1>Post Delete</h1>
+
+        <form action="" method="post">{% csrf_token %}
+            <p>정말로 <strong style="color: #3656bb">"{{ object }}"</strong> 포스트를 삭제 합니까?</p><br>
+
+            <button type="submit" class="btn btn-default btn-danger">삭제하기</button>
+        </form>
+
+    </div>
+{% endblock %}

@@ -1,0 +1,55 @@
+- name: Make docker tmp directory 
+  file:
+    path: /tmp/docker
+    state: directory
+    mode: 0755
+
+- name: Copy the Dockerfile
+  template:
+    src: Dockerfile.tmp
+    dest: /tmp/docker/Dockerfile
+    owner: root
+    group: root
+    mode: 0777
+    backup: yes
+
+- shell: docker build -t booking-img /tmp/docker/
+  register: ps
+  ignore_errors: yes
+
+- debug:
+    msg: "{{ps.stdout_lines}}"
+
+- name: Make docker tmp directory 
+  file:
+    path: /mnt/mysql
+    state: directory
+    mode: 0755
+
+- name: running DB container
+  docker:
+    name: mariadb-con
+    image: mariadb
+    state: started
+    volumes:
+      - "/mnt/mysql:/var/lib/mysql"
+    ports:
+      - "3306:3306"
+    env:
+        MYSQL_ROOT_PASSWORD: devOps!23
+        MYSQL_USER: admin
+        MYSQL_PASSWORD: devOps!23
+        MYSQL_DATABASE: booking
+
+- name: running booking container
+  docker:
+    name: booking-con
+    image: booking-img
+    state: started
+    volumes:
+      - /mnt/booking/:/home/booking
+    ports:
+      - 80:80
+    links:
+      - 'mariadb-con:mariadb'
+  

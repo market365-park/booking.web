@@ -1,0 +1,47 @@
+{% extends "base.html" %} {% block content %}
+
+<form class="navbar-form navbar form-inline" role="search" action="{% url 'blog:bssearch' %}">
+    <div class="form-group">
+        <h1>Post List</h1>
+        <div class="input-group">
+
+            <input type="text" class="form-control" name="search" placeholder="search blog contents">
+            <span class="input-group-addon">
+                <i class="glyphicon glyphicon-search"></i>
+            </span>
+        </div>
+    </div>
+</form>
+
+<div class="col-xs-8 col-xs-offset-2" id="content" style="height: 710px; overflow-y: auto; text-align: left">
+    <hr>
+    <div style="font-size: 16px;">
+        <ul style="list-style:none;">
+            {% for post in object_list %}
+            <li>
+                <strong>{{ post.modify_date|date:"Y-m-d" }}&nbsp;&nbsp;&nbsp;
+                    <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+                </strong>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<div class="col-xs-8 col-xs-offset-2" id="page">
+    <hr>
+    <div class="col-xs-12">
+        <strong>
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}">
+                <<< </a>
+                    {% endif %} Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }} {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}"> >>></a>
+                    {% endif %}
+        </strong>
+    </div>
+    <div class="col-xs-12">
+
+    </div>
+</div>
+{% endblock %}

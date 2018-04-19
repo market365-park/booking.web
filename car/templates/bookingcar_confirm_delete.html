@@ -1,0 +1,51 @@
+{% extends "base_min.html" %}
+
+{% block title %}Booking confirm delete{% endblock %}
+
+{% block content %}
+    <script>
+        function getQuerystring(paramName){
+            var _tempUrl = window.location.search.substring(1); //url에서 처음부터 '?'까지 삭제
+            var _tempArray = _tempUrl.split('&'); // '&'을 기준으로 분리하기
+
+            for(var i = 0; _tempArray.length; i++) {
+                var _keyValuePair = _tempArray[i].split('='); // '=' 을 기준으로 분리하기
+                if(_keyValuePair[0] == paramName){ // _keyValuePair[0] : 파라미터 명
+                    // _keyValuePair[1] : 파라미터 값
+                    return _keyValuePair[1];
+                }}}
+
+        var start_datetime = getQuerystring('start');
+        var formattedDatetime_start = new Date(Number(start_datetime));
+        var start_day = formattedDatetime_start.toISOString().slice(0,10);
+
+        requestUrl = "/car/?start=";
+        requestUrl = requestUrl + start_day;
+
+        function linkToOpener(){
+            if (window.opener && !window.opener.closed) {
+                opener.parent.location = requestUrl;
+            }
+        }
+    </script>
+
+    <div id="content">
+        <br><h2>시험차 예약 삭제</h2>
+        <h5>정말 시험차 예약을 삭제하나요?</h5><br>
+        <div class="col-xs-12">
+            탑승자 정보 : {{ bookingcarinfo.passenger }}<br>
+            이용목적 : {{ bookingcarinfo.purpose }}<br>
+            목적지 정보 : {{ bookingcarinfo.destination }}<br>
+            예약자 정보 : {{ bookingcarinfo.title }}<br>
+            예약일 : {{ bookingcarinfo.start_time |date:"y/m/d" }}<br>
+            예약시간 : {{ bookingcarinfo.start_time |time:"H:i" }} ~ {{ bookingcarinfo.end_time |time:"H:i" }}<br>
+            예약시험차 : {{ bookingcarinfo.car_id }}<br><br>
+        </div>
+
+        <div class="col-xs-4 col-xs-offset-4">
+            <form id="delete" action="." method="post" onclick="linkToOpener()">{% csrf_token %}
+                <button id="delete" class="btn btn-default btn-block" type="submit" >삭제하기</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

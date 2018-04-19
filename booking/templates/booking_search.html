@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Booking search{% endblock %}
+
+{% block content %}
+    <div id="content">
+
+        <h1>Blog Search</h1>
+
+        <form action="." method="post"> {% csrf_token %}
+            {{ form.as_table }}
+            <input type="submit" value="Submit" />
+        </form>
+
+        <br/><br/>
+
+        {% if object_list %}
+            {% for bookinginfo in object_list %}
+                <h2><a href='{{ bookinginfo.get_absolute_url }}'>{{ bookinginfo.title }}</a></h2>
+                {{ bookinginfo.modify_date|date:"N d, Y" }}
+                <p>{{ bookinginfo.description }}</p>
+            {% endfor %}
+
+        {% elif search_term %}
+            <b><i>Search Word({{ search_term }}) Not Found !</i></b>
+        {% endif %}
+
+    </div>
+{% endblock %}

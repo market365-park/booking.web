@@ -1,0 +1,62 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>부킹부킹</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+    <!-- Bootstrap 3.3.6 -->
+    <link rel="stylesheet" type="text/css" href="{% static "bootstrap/css/bootstrap.min.css" %}" />
+    <link rel="stylesheet" type="text/css" href="{% static "bootstrap/css/bootstrap-datepicker.min.css" %}" />
+
+    <link rel="shortcut icon" href="{% static "images/favicon.ico" %}">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        @font-face {
+            font-family: "NanumBarunGothic-YetHangul";
+            src:url({% static "font/NanumBarunGothic-YetHangul.eot" %});
+            src:url({% static "font/NanumBarunGothic-YetHangul.woff" %}) format("woff"),
+            url({% static "font/NanumBarunGothic-YetHangul.ttf" %}) format("truetype");
+        }
+
+        body {
+            font-family: NanumBarunGothic-YetHangul;
+        }
+    </style>
+
+    {% block stylesheet %}{% endblock %}
+</head>
+
+<body role="document">
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container" style="text-align: center;">
+
+        <h4 style="color:#BEBDBF"><span class="glyphicon glyphicon-user"></span>{{ user.first_name }} / {{ user.last_name }}</h4>
+    </div>
+</nav><!--/.navbar -->
+
+<div class="container" style="text-align: center;">
+    <div class="row">
+        <hr>
+        {% block content %}{% endblock %}
+    </div>
+</div> <!-- /container -->
+
+{% block footer %}{% endblock %}
+<!-- jQuery 2.2.3 -->
+<script type="text/javascript" src={% static "plugins/jQuery/jquery-2.2.3.min.js" %}></script>
+<!-- Bootstrap 3.3.6 -->
+<script type="text/javascript" src={% static "bootstrap/js/bootstrap.js" %}></script>
+<script type="text/javascript" src={% static "bootstrap/js/bootstrap-datepicker.min.js" %}></script>
+
+{% block script %}{% endblock %}
+</body>
+</html>

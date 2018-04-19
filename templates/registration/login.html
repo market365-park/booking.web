@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h1>Please Login</h1>
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <form id="signin" class="form-signin" method="post" action=".">
+                {% csrf_token %}
+
+                <p>Please enter your id and password.</p>
+                <br>
+                <!-- Username input-->
+                <div class="row control-group">
+                    <div class="form-group col-xs-12 floating-label-form-group controls">
+                        {{ form.username }}
+                        <span class="field-error">{{ form.username.errors|striptags }}</span>
+                    </div>
+                </div>
+
+                <!-- Password input-->
+                <div class="row control-group">
+                    <div class="form-group col-xs-12 floating-label-form-group controls">
+                        {{ form.password }}
+                        <span class="field-error">{{ form.password.errors|striptags }}</span>
+                    </div>
+                </div>
+
+                <br>
+                <!-- Sign in Button -->
+                <div class="row control-group">
+                    <div class="form-group col-xs-12">
+                        <button id="signin" name="signin" class="btn btn-default btn-default btn-block" type="submit">Log In</button>
+                    </div>
+                </div>
+                <br>
+                <hr>
+
+                <center>
+                    계정이 없다면 <a href="{% url 'register' %}"><u>여기</u></a>를 눌러 회원가입을 해주세요.
+                </center>
+
+            </form >
+        </div>
+    </div>
+
+{% endblock %}

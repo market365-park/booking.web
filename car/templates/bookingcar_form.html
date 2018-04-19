@@ -1,0 +1,112 @@
+{% extends "base_min.html" %}
+
+{% block title %}Booking Car{% endblock %}
+
+{% block content %}
+    <script>
+        function getQuerystring(paramName){
+            var _tempUrl = window.location.search.substring(1); //url에서 처음부터 '?'까지 삭제
+            var _tempArray = _tempUrl.split('&'); // '&'을 기준으로 분리하기
+
+            for(var i = 0; _tempArray.length; i++) {
+                var _keyValuePair = _tempArray[i].split('='); // '=' 을 기준으로 분리하기
+
+                if(_keyValuePair[0] == paramName){ // _keyValuePair[0] : 파라미터 명
+                    // _keyValuePair[1] : 파라미터 값
+                    return _keyValuePair[1];
+                }}}
+
+        var start_datetime = getQuerystring('start');
+        var end_datetime = getQuerystring('end');
+
+        var formattedDatetime_start = new Date(Number(start_datetime));
+        var formattedDatetime_end = new Date(Number(end_datetime));
+        var start_day = formattedDatetime_start.toISOString().slice(0,10);
+
+        var start_time_h = formattedDatetime_start.toISOString().slice(11,13);
+        var start_time_m = formattedDatetime_start.toISOString().slice(14,16);
+        var start_time = Number(start_time_h+start_time_m);
+
+        var end_time_h = formattedDatetime_end.toISOString().slice(11,13);
+        var end_time_m = formattedDatetime_end.toISOString().slice(14,16);
+        var end_time = Number(end_time_h+end_time_m);
+
+
+        requestUrl = "/car/?start=";
+        requestUrl = requestUrl + start_day;
+
+        function linkToOpener() {
+            opener.parent.location = requestUrl;
+            opener.parent.location = requestUrl;
+        }
+
+    </script>
+
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <form id="signin" class="form-signin" action="." method="post">{% csrf_token %}
+
+                <h2 class="form-signin-heading">시험차 예약</h2>
+                <h5>클릭 한 번으로 손쉽게 시험차를 예약하세요.</h5>
+
+                <div class="row control-group">
+                        <div class="form-group col-xs-12 floating-label-form-group controls">
+                            {{ form.passenger.label_tag }}<br>{{ form.passenger }}
+                            <span class="field-error">{{ form.username.errors|striptags }}</span>
+                        </div>
+                </div>
+    
+                <div class="row control-group">
+                        <div class="form-group col-xs-12 floating-label-form-group controls">
+                            {{ form.purpose.label_tag }}<br>{{ form.purpose }}
+                            <span class="field-error">{{ form.username.errors|striptags }}</span>
+                        </div>
+                </div>
+    
+                <div class="row control-group">
+                        <div class="form-group col-xs-12 floating-label-form-group controls">
+                            {{ form.destination.label_tag }}<br>{{ form.destination }}
+                            <span class="field-error">{{ form.username.errors|striptags }}</span>
+                        </div>
+                </div> 
+                
+                <div class="row control-group">
+                    <div class="form-group col-xs-12 floating-label-form-group controls">
+                        {{ form.title.label_tag }}<br>{{ form.title }}
+                        <span class="field-error">{{ form.username.errors|striptags }}</span>
+                    </div>
+                </div>
+
+                <div class="row control-group">
+                    <div class="form-group col-xs-12 floating-label-form-group controls">
+                        {{ form.start_time.label_tag }}<br>{{ form.start_time }}
+                        <span class="field-error">{{ form.username.errors|striptags }}</span>
+                    </div>
+                </div>
+
+                <div class="row control-group">
+                    <div class="form-group col-xs-12 floating-label-form-group controls">
+                        {{ form.end_time.label_tag }}<br>{{ form.end_time }}
+                        <span class="field-error">{{ form.username.errors|striptags }}</span>
+                    </div>
+                </div>
+
+                <div class="row control-group">
+                    <div class="form-group col-xs-12 floating-label-form-group controls">
+                        {{ form.car_id.label_tag }}<br>{{ form.car_id }}
+                        <span class="field-error">{{ form.username.errors|striptags }}</span>
+                    </div>
+                </div>
+                <div class="row control-group">                
+                    <span style="color:red">{{ form.checkflag }} 메인화면 하단의 시험차량 사용 시 주의사항을 충분히 숙지하고 예약합니다.</span>
+                </div>
+                <hr>
+                <div class="col-xs-4 col-xs-offset-4">
+                    <button id="signin" name="signin" class="btn btn-default btn-block" type="submit" onclick="linkToOpener()">예약하기</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="col-md-4"></div>
+{% endblock %}

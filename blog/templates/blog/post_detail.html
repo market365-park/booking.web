@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}post_detail.html{% endblock %}
+
+{% block content %}
+    <div id="content">
+        <h2>{{ object.title }}</h2>
+        <div class="col-sm-8 col-sm-offset-2">
+            <p>{{ object.owner.first_name }} | {{ object.owner.last_name }}  | {{ object.modify_date|date:"j F, Y | H:m" }}</p>
+            {% if user.username == object.owner.username %}
+                <a href="/blog/{{ object.pk }}/update/" class="btn btn-warning" role="button">수정</a>
+                <a href="/blog/{{ object.pk }}/delete/" class="btn btn-danger" role="button">삭제</a>
+            {% endif %}
+            <hr>
+
+            <div class="body" style="text-align: left; width: 750px; height: 550px; overflow-y: auto">
+                {{ object.content|linebreaks }}
+            </div>
+
+            <br><hr>
+
+            <p class="other_posts">
+                {% if object.get_previous_by_modify_date %}
+                    <strong><a href="{{ object.get_previous_post.get_absolute_url }}" title="View previous post"><<< {{ object.get_previous_post }}</a> | </strong>
+                {% endif %}
+
+                <strong><a href="{% url "blog:main" %}" title="View list post">목록</a></strong>
+
+                {% if object.get_next_by_modify_date %}
+                    <strong> | <a href="{{ object.get_next_post.get_absolute_url }}" title="View next post">{{ object.get_next_post }} >>></a></strong>
+                {% endif %}
+            </p>
+        </div>
+
+
+
+
+
+
+    </div>
+{% endblock %}

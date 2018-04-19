@@ -1,0 +1,87 @@
+{% extends "base.html"%}
+
+{% block title %}Registration{% endblock %}
+
+{% block content %}
+
+    <h1>Please Registration</h1>
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <form id="signup" class="form-signin" method="post" action=".">{% csrf_token %}
+
+                <p>Please enter your information.</p>
+                <br>
+                <!-- Username input -->
+                <div class="row control-group">
+                    <div class="form-group col-xs-12 floating-label-form-group controls">
+                        {{ form.username }}
+                        <span class="field-error">{{ form.username.errors|striptags }}</span>
+                    </div>
+                </div>
+
+                <!-- realrname input -->
+                <div class="row control-group">
+                    <div class="form-group col-xs-12 floating-label-form-group controls">
+                        {{ form.first_name }}
+                        <span class="field-error">{{ form.first_name.errors|striptags }}</span>
+                    </div>
+                </div>
+
+                <!-- Email input-->
+                <div class="row control-group">
+                    <div class="form-group col-xs-12 floating-label-form-group controls">
+                        {{ form.email }}
+                        <span class="field-error">{{ form.email.errors|striptags }}</span>
+                    </div>
+                </div>
+
+                <!-- Phone input-->
+                <div class="row control-group">
+                    <div class="form-group col-xs-12 floating-label-form-group controls">
+                        {{ form.phone }}
+                        <span class="field-error">{{ form.phone.errors|striptags }}</span>
+                    </div>
+                </div>
+
+                <!-- team name input -->
+                <div class="row control-group">
+                    <div class="form-group col-xs-12 floating-label-form-group controls">
+                        {{ form.last_name }}
+                        <span class="field-error">{{ form.last_name.errors|striptags }}</span>
+                    </div>
+                </div>
+
+                <!-- Password1 input-->
+                <div class="row control-group">
+                    <div class="form-group col-xs-12 floating-label-form-group controls">
+                        {{ form.password1 }}
+                        <span class="field-error">{{ form.password1.errors|striptags }}</span>
+                    </div>
+                </div>
+
+                <!-- Password2 input-->
+                <div class="row control-group">
+                    <div class="form-group col-xs-12 floating-label-form-group controls">
+                        {{ form.password2 }}
+                        <span class="field-error">{{ form.password2.errors|striptags }}</span>
+                    </div>
+                </div>
+
+                <br>
+
+                <!-- Button -->
+                <div class="row">
+                    <div class="form-group col-xs-12">
+                        <button id="signup" name="signup" class="btn btn-lg btn-primary btn-block" type="submit">Sign Up</button>
+                        <hr>
+                        <center>
+                            계정이 있다면 <a href="{% url 'login' %}"><u>여기</u></a>를 눌러 로그인 해주세요.
+                        </center>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="col-md-4"></div>
+{% endblock %}

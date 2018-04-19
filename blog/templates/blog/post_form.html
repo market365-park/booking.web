@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="form-group col-xs-8 col-xs-offset-2" id="content" style="text-align: left">
+        <h1>블로그에 포스팅 하기</h1><br>
+        <form action="." method="post">{% csrf_token %}
+            <fieldset class="aligned">
+                <div class="row control-group">
+                    {{ form.title.label_tag }}<br>
+                    {{ form.title }}<span class="field-error">{{ form.title.errors|striptags }}</span>
+                </div>
+
+                <div class="row control-group">
+                    {{ form.content.label_tag }}<br>
+                    {{ form.content }}<span class="field-error">{{ form.content.errors|striptags }}</span>
+                </div>
+            </fieldset>
+            <hr>
+            <div class="row control-group">
+                <button id="signup" name="signup" class="btn btn-lg btn-default btn-block" type="submit">등록하기</button>
+            </div>
+        </form>
+
+    </div>
+{% endblock %}
